@@ -80,22 +80,37 @@ int posix_fallocate(int, off_t, off_t);
 #define SEEK_END 2
 
 #ifndef S_IRUSR
-#define S_ISUID 04000
-#define S_ISGID 02000
-#define S_ISVTX 01000
-#define S_IRUSR 0400
-#define S_IWUSR 0200
-#define S_IXUSR 0100
-#define S_IRWXU 0700
-#define S_IRGRP 0040
-#define S_IWGRP 0020
-#define S_IXGRP 0010
-#define S_IRWXG 0070
-#define S_IROTH 0004
-#define S_IWOTH 0002
-#define S_IXOTH 0001
-#define S_IRWXO 0007
+/* 权限位常量 */
+#define S_ISUID     0004000   /* 设置用户ID */
+#define S_ISGID     0002000   /* 设置组ID */
+#define S_ISVTX     0001000   /* 粘滞位 */
+
+#define S_IRUSR     0000400   /* 所有者读权限 */
+#define S_IWUSR     0000200   /* 所有者写权限 */
+#define S_IXUSR     0000100   /* 所有者执行权限 */
+#define S_IRWXU     0000700   /* 所有者读/写/执行 */
+
+#define S_IRGRP     0000040   /* 组读权限 */
+#define S_IWGRP     0000020   /* 组写权限 */
+#define S_IXGRP     0000010   /* 组执行权限 */
+#define S_IRWXG     0000070   /* 组读/写/执行 */
+
+#define S_IROTH     0000004   /* 其他人读权限 */
+#define S_IWOTH     0000002   /* 其他人写权限 */
+#define S_IXOTH     0000001   /* 其他人执行权限 */
+#define S_IRWXO     0000007   /* 其他人读/写/执行 */
 #endif
+
+// /* 文件类型测试宏 */
+// #define S_ISTYPE(mode, mask)  (((mode) & S_IFMT) == (mask))
+// #define S_ISDIR(mode)         S_ISTYPE((mode), S_IFDIR)
+// #define S_ISCHR(mode)         S_ISTYPE((mode), S_IFCHR)
+// #define S_ISBLK(mode)         S_ISTYPE((mode), S_IFBLK)
+// #define S_ISREG(mode)         S_ISTYPE((mode), S_IFREG)
+// #define S_ISFIFO(mode)        S_ISTYPE((mode), S_IFIFO)
+// #define S_ISLNK(mode)         S_ISTYPE((mode), S_IFLNK)
+// #define S_ISSOCK(mode)        S_ISTYPE((mode), S_IFSOCK)
+
 
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 #define AT_NO_AUTOMOUNT 0x800

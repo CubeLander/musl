@@ -27,7 +27,7 @@ extern "C" {
 
 #include <bits/alltypes.h>
 
-#include <bits/stat.h>
+
 
 #define st_atime st_atim.tv_sec
 #define st_mtime st_mtim.tv_sec
@@ -76,7 +76,7 @@ extern "C" {
 
 #define UTIME_NOW  0x3fffffff
 #define UTIME_OMIT 0x3ffffffe
-
+struct stat;
 int stat(const char *__restrict, struct stat *__restrict);
 int fstat(int, struct stat *);
 int lstat(const char *__restrict, struct stat *__restrict);
@@ -194,6 +194,11 @@ __REDIR(utimensat, __utimensat_time64);
 #ifdef __cplusplus
 }
 #endif
+
+
+#include <bits/stat.h>
+
+
 #endif
 
 
