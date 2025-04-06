@@ -64,15 +64,15 @@ ExternalProject_Add(musl_build
 )
 
 # 创建一个接口库，以便在CMake中使用
-add_library(musl_lib INTERFACE)
-add_dependencies(musl_lib musl_build)
+add_library(musl INTERFACE)
+add_dependencies(musl musl_build)
 
 # 设置包含目录和库路径
-target_include_directories(musl_lib INTERFACE 
+target_include_directories(musl INTERFACE 
     ${CMAKE_CURRENT_BINARY_DIR}/temp_install/include
 )
 
-target_link_directories(musl_lib INTERFACE 
+target_link_directories(musl INTERFACE 
     ${MUSL_OUTPUT_DIR}
 )
 
