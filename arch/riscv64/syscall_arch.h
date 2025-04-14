@@ -1,11 +1,14 @@
 #define __SYSCALL_LL_E(x) (x)
 #define __SYSCALL_LL_O(x) (x)
 
+
+long do_syscall(long syscall_num, long a0, long a1, long a2, long a3, long a4, long a5);
+
 #define __asm_syscall(...) \
-	__asm__ __volatile__ ("ecall\n\t" \
+	__asm__ __volatile__ ("call do_syscall\n\t" \
 	: "=r"(a0) : __VA_ARGS__ : "memory"); \
 	return a0; \
-
+// 原本是ecall
 static inline long __syscall0(long n)
 {
 	register long a7 __asm__("a7") = n;
