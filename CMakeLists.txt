@@ -1,63 +1,28 @@
 cmake_minimum_required(VERSION 3.10)
 project(musl C)
 
-# 设置输出目录
-set(MUSL_OUTPUT_DIR ${CMAKE_BINARY_DIR}/lib)
+
 
 # 从原来的构建命令转换
 include(ExternalProject)
 
+# 设置输出目录
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_PROCESSOR riscv64)
+# riscv64-unknown-elf
+set(CMAKE_C_COMPILER riscv64-linux-gnu-gcc)
+set(CMAKE_CXX_COMPILER riscv64-linux-gnu-g++)
+set(CMAKE_ASM_COMPILER riscv64-linux-gnu-gcc)
+set(MUSL_OUTPUT_DIR ${CMAKE_BINARY_DIR}/lib)
+
 # 获取处理器核心数
 execute_process(COMMAND nproc OUTPUT_VARIABLE NUM_PROCESSORS OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-# 创建简化的构建脚本，直接编译到目标位置
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/build_musl.sh
-"#!/bin/bash
-set -ex
-
-# 进入源码目录
-cd \"${CMAKE_CURRENT_SOURCE_DIR}\"
-
-# 确保输出目录存在
-mkdir -p \"${MUSL_OUTPUT_DIR}\"
-
-# 配置musl - 注意：我们仍然需要一个临时安装目录来获取头文件
-TEMP_INSTALL_DIR=\"${CMAKE_CURRENT_BINARY_DIR}/temp_install\"
-mkdir -p \"$TEMP_INSTALL_DIR\"
-
-# 配置musl
-echo \"配置 musl...\"
-./configure \\
-  --prefix=\"$TEMP_INSTALL_DIR\" \\
-  --target=riscv64-unknown-elf \\
-  --disable-shared \\
-  CFLAGS=\"-g3 -O0 -fno-omit-frame-pointer -mabi=lp64d\" \\
-  CC=riscv64-unknown-elf-gcc
-
-# 构建musl
-echo \"构建 musl...\"
-make clean
-make -j${NUM_PROCESSORS}
-
-# 直接复制库文件到目标位置而不是安装
-echo \"复制 musl 库到目标位置...\"
-cp lib/libc.a \"${MUSL_OUTPUT_DIR}/libc.a\"
-
-# 安装头文件到临时目录
-make install
-
-echo \"musl构建完成\"
-")
-
-# 设置脚本权限
-execute_process(COMMAND chmod +x ${CMAKE_CURRENT_BINARY_DIR}/build_musl.sh)
-
 # 简化ExternalProject配置，只使用一个脚本处理全部步骤
 ExternalProject_Add(musl_build
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""  # 不使用单独的配置命令
-    BUILD_COMMAND ${CMAKE_CURRENT_BINARY_DIR}/build_musl.sh  # 使用我们的构建脚本
+    BUILD_COMMAND ${CMAKE_SOURCE_DIR}/script/build_musl.sh  # 使用我们的构建脚本
     INSTALL_COMMAND ""  # 不使用单独的安装命令
     BUILD_IN_SOURCE 0  # 不使用build-in-source，我们的脚本自己会进入源码目录
     LOG_BUILD TRUE     # 记录构建日志
